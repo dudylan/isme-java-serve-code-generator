@@ -1,5 +1,5 @@
 # 项目介绍
-本项目基于 [zclzone/isme-nest-serve](https://github.com/zclzone/isme-nest-serve) 开发，新增了两项实用功能：
+本项目基于 [DHBin/isme-java-serve](https://github.com/DHBin/isme-java-serve) 开发，新增了两项实用功能：
 1. **自动生成代码**：项目启动时会依据数据库表自动生成对应代码，免去手动编写的繁琐。
 2. **自动填充数据库字段**：在项目启动时自动填充数据库中的创建时间、修改时间、创建人及修改人字段，减少手动编码工作。
 
