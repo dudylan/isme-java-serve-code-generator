@@ -1,9 +1,9 @@
 # 项目介绍
- 本项目是在(https://github.com/zclzone/isme-nest-serve)的基础上增加了自动生成代码和自动填充数据库的创建时间 修改时间 以及 创建人 修改人的功能。
- 自动生成代码的功能是在项目启动时根据数据库表自动生成对应的代码，避免了手动编写代码的麻烦。
- 自动填充数据库的创建时间 修改时间 以及 创建人 修改人的功能是在项目启动时根据数据库表自动填充对应的字段，避免了手动编写代码的麻烦。
- 其中包含了前端项目[Vue Naive Admin 2.0](https://github.com/zclzone/vue-naive-admin)  的api.js 和相对应的index.vue.
- 会生成在src/main/java/vue目录下。 复制到前端项目中即可使用。简单的增删改查。减少重复的工作量
+本项目基于 [zclzone/isme-nest-serve](https://github.com/zclzone/isme-nest-serve) 开发，新增了两项实用功能：
+1. **自动生成代码**：项目启动时会依据数据库表自动生成对应代码，免去手动编写的繁琐。
+2. **自动填充数据库字段**：在项目启动时自动填充数据库中的创建时间、修改时间、创建人及修改人字段，减少手动编码工作。
+
+此外，项目还包含前端项目 [Vue Naive Admin 2.0](https://github.com/zclzone/vue-naive-admin) 的 `api.js` 和对应的 `index.vue` 文件，这些文件会生成在 `src/main/java/vue` 目录下，复制到前端项目中即可实现简单的增删改查操作，有效减少重复工作。
 
 
 
@@ -13,7 +13,6 @@
 ![Static Badge](https://img.shields.io/badge/Version-0.0.1--SNAPSHOT-blue)
 ![Static Badge](https://img.shields.io/badge/Spring_Boot-3.1.6-blue)
 ![Static Badge](https://img.shields.io/badge/Jdk-21-blue)
-
 ## 简介
 
 本项目是 [Vue Naive Admin 2.0](https://github.com/zclzone/vue-naive-admin) 的一个轻量级的Java后端服务。最小启动要求不需要第三方中间件，兼容
