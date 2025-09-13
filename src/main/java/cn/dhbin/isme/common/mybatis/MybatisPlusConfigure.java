@@ -1,6 +1,7 @@
 package cn.dhbin.isme.common.mybatis;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan("cn.dhbin.isme.*.mapper")
 public class MybatisPlusConfigure {
 
-
     /**
      * 分页插件
      *
@@ -28,6 +28,5 @@ public class MybatisPlusConfigure {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
-
 
 }

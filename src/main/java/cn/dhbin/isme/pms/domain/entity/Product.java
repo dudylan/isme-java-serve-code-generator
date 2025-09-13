@@ -1,6 +1,8 @@
 package cn.dhbin.isme.pms.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -14,8 +16,8 @@ import lombok.Setter;
  * 产品表（用于测试代码生成）
  * </p>
  *
- * @author your_name
- * @since 2025-09-06
+ * @author Dylan Du
+ * @since 2025-09-13
  */
 @Getter
 @Setter
@@ -63,21 +65,25 @@ public class Product implements Serializable {
     /**
      * 创建用户
      */
+    @TableField(fill = FieldFill.INSERT)
     private String createUser;
 
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
      * 更新用户
      */
-    private LocalDateTime updateUser;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateUser;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     /**

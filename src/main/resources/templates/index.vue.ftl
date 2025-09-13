@@ -2,53 +2,74 @@
  - @Author: ${author}
  - @LastEditor: ${author}
  - @LastEditTime: ${date}
+ - @Description: ${entity}管理页面
  --------------------------------->
 
 <template>
     <CommonPage>
         <template #action>
-            <NButton  type="primary" @click="handleAdd()">
+            <NButton type="primary" @click="handleAdd()">
                 <i class="i-material-symbols:add mr-4 text-18" />
-                创建
+                创建${entity}
             </NButton>
         </template>
         <MeCrud
-                ref="$table"
-                v-model:query-items="queryItems"
-                :scroll-x="1200"
-                :columns="columns"
-                :get-data="api.read"
-        >
-
-        </MeCrud>
-
+            ref="$table"
+            v-model:query-items="queryItems"
+            :scroll-x="1200"
+            :columns="columns"
+            :get-data="api.read"
+        />
         <MeModal ref="modalRef" width="520px">
             <n-form
-                    ref="modalFormRef"
-                    label-placement="left"
-                    label-align="left"
-                    :label-width="80"
-                    :model="modalForm"
-                    :disabled="modalAction === 'view'"
+                ref="modalFormRef"
+                label-placement="left"
+                label-align="left"
+                :label-width="80"
+                :model="modalForm"
+                :disabled="modalAction === 'view'"
             >
-
+                <#if table.fields??>
+                <#list table.fields as field>
+                <#-- 排除系统字段 -->
+                <#if !config.systemFields?seq_contains(field.propertyName)>
+                <n-form-item label="${field.comment!field.propertyName}" path="${field.propertyName}">
+                    <#-- 数字类型字段使用数字输入框 -->
+                    <#if field.propertyType?contains("Integer") || field.propertyType?contains("Long")
+                          || field.propertyType?contains("Double") || field.propertyType?contains("BigDecimal")>
+                    <n-input-number
+                        v-model:value="modalForm.${field.propertyName}"
+                        placeholder="请输入${field.comment!field.propertyName}"
+                        :min="0"
+                        :precision="<#if field.propertyType?contains('Integer') || field.propertyType?contains('Long')>0<#else>2</#if>"
+                    />
+                    <#-- Boolean类型字段使用开关组件 -->
+                    <#elseif field.propertyType == "Boolean" || field.propertyType == "boolean">
+                    <n-switch v-model:value="modalForm.${field.propertyName}" />
+                    <#else>
+                    <n-input v-model:value="modalForm.${field.propertyName}" placeholder="请输入${field.comment!field.propertyName}" />
+                    </#if>
+                </n-form-item>
+                </#if>
+                </#list>
+                <#else>
+                <n-alert type="warning">未定义字段列表</n-alert>
+                </#if>
             </n-form>
         </MeModal>
     </CommonPage>
 </template>
 
 <script setup>
-import { NAvatar, NButton, NSwitch, NTag } from 'naive-ui'
-import { MeCrud, MeModal, MeQueryItem } from '@/components'
+import { NButton, NTag } from 'naive-ui'
+import { MeCrud, MeModal } from '@/components'
 import { useCrud } from '@/composables'
-import { withPermission } from '@/directives'
 import { formatDateTime } from '@/utils'
 import api from './api'
 
-defineOptions({ name: 'UserMgt' })
+defineOptions({ name: '${entity}Mgt' })
 
 const $table = ref(null)
-/** QueryBar筛选参数（可选） */
 const queryItems = ref({})
 
 onMounted(() => {
@@ -65,8 +86,14 @@ const {
     handleOpen,
     handleSave,
 } = useCrud({
-    name: '',
-    initForm: { },
+    name: '${entity}',
+    initForm: {
+        <#if fields??>
+        <#list fields as field>
+        ${field.propertyName}: '',
+        </#list>
+        </#if>
+    },
     doCreate: api.create,
     doDelete: api.delete,
     doUpdate: api.update,
@@ -74,147 +101,53 @@ const {
 })
 
 const columns = [
+    <#if table.fields??>
+    <#list table.fields as field>
     {
-        title: '头像',
-        key: 'avatar',
-        width: 80,
-        render: ({ avatar }) =>
-            h(NAvatar, {
-                size: 'medium',
-                src: avatar,
-            }),
+        title: '${field.comment!field.propertyName}',
+        key: '${field.propertyName}',
+        width: 150,
+        ellipsis: { tooltip: true }
     },
-    { title: '用户名', key: 'username', width: 150, ellipsis: { tooltip: true } },
-    {
-        title: '角色',
-        key: 'roles',
-        width: 200,
-        ellipsis: { tooltip: true },
-        render: ({ roles }) => {
-            if (roles?.length) {
-                return roles.map((item, index) =>
-                    h(
-                        NTag,
-                        { type: 'success', style: index > 0 ? 'margin-left: 8px;' : '' },
-                        { default: () => item.name },
-                    ),
-                )
-            }
-            return '暂无角色'
-        },
-    },
-    {
-        title: '性别',
-        key: 'gender',
-        width: 80,
-        render: ({ gender }) => genders.find(item => gender === item.value)?.label ?? '',
-    },
-    { title: '邮箱', key: 'email', width: 150, ellipsis: { tooltip: true } },
+    </#list>
+    </#if>
     {
         title: '创建时间',
-        key: 'createDate',
+        key: 'createTime',
         width: 180,
         render(row) {
             return h('span', formatDateTime(row.createTime))
-        },
-    },
-    {
-        title: '状态',
-        key: 'enable',
-        width: 120,
-        render: row =>
-            h(
-                NSwitch,
-                {
-                    size: 'small',
-                    rubberBand: false,
-                    value: row.enable,
-                    loading: !!row.enableLoading,
-                    onUpdateValue: () => handleEnable(row),
-                },
-                {
-                    checked: () => '启用',
-                    unchecked: () => '停用',
-                },
-            ),
+        }
     },
     {
         title: '操作',
         key: 'actions',
-        width: 420,
+        width: 200,
         align: 'right',
         fixed: 'right',
-        hideInExcel: true,
         render(row) {
             return [
-                withPermission(
-                    h(NButton, {
-                        size: 'small',
-                        type: 'primary',
-                        secondary: true,
-                    }, {
-                        default: () => '超管专属',
-                        icon: () => h('i', { class: 'i-carbon:user-role text-14' }),
-                    }),
-                    'SuperAdmin',
-                ),
                 h(
                     NButton,
                     {
                         size: 'small',
                         type: 'primary',
-                        class: 'ml-12px',
-                        secondary: true,
-                        onClick: () => handleOpenRolesSet(row),
+                        onClick: () => handleOpen({ row })
                     },
-                    {
-                        default: () => '分配角色',
-                        icon: () => h('i', { class: 'i-carbon:user-role text-14' }),
-                    },
+                    { default: () => '编辑' }
                 ),
-                h(
-                    NButton,
-                    {
-                        size: 'small',
-                        type: 'primary',
-                        style: 'margin-left: 12px;',
-                        onClick: () => handleOpen({ action: 'reset', title: '重置密码', row, onOk: onSave }),
-                    },
-                    {
-                        default: () => '重置密码',
-                        icon: () => h('i', { class: 'i-radix-icons:reset text-14' }),
-                    },
-                ),
-
                 h(
                     NButton,
                     {
                         size: 'small',
                         type: 'error',
                         style: 'margin-left: 12px;',
-                        onClick: () => handleDelete(row.id),
+                        onClick: () => handleDelete(row.id)
                     },
-                    {
-                        default: () => '删除',
-                        icon: () => h('i', { class: 'i-material-symbols:delete-outline text-14' }),
-                    },
-                ),
+                    { default: () => '删除' }
+                )
             ]
-        },
-    },
+        }
+    }
 ]
-
-async function handleEnable(row) {
-    row.enableLoading = true
-    try {
-        await api.update({ id: row.id, enable: !row.enable })
-        row.enableLoading = false
-        $message.success('操作成功')
-        $table.value?.handleSearch()
-    }
-    catch (error) {
-        console.error(error)
-        row.enableLoading = false
-    }
-}
 </script>

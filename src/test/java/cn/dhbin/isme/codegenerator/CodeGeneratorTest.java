@@ -1,18 +1,24 @@
 package cn.dhbin.isme.codegenerator;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
+import com.baomidou.mybatisplus.generator.IFill;
 import com.baomidou.mybatisplus.generator.config.IOutputFile;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.baomidou.mybatisplus.generator.fill.Column;
+import com.baomidou.mybatisplus.generator.fill.Property;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.*;
+
+import static cn.dhbin.isme.common.config.FieldNamesConfig.*;
 
 /**
  * 放在test目录中的代码生成器，通过JUnit测试方法执行
@@ -66,6 +72,14 @@ public class CodeGeneratorTest {
                 })
                 // 策略配置（生成product表）
                 .strategyConfig(builder -> {
+                    // 添加自动填充字段
+                    List<IFill> tableFills = new ArrayList<>();
+                        tableFills.add(new Property(CREATE_TIME, FieldFill.INSERT));
+                        tableFills.add(new Property(UPDATE_TIME, FieldFill.INSERT_UPDATE));
+                        tableFills.add(new Property(CREATE_BY, FieldFill.INSERT));
+                        tableFills.add(new Property(UPDATE_BY, FieldFill.INSERT_UPDATE));
+                    builder.entityBuilder().addTableFills(tableFills);
+
                     builder.addInclude("product")
                             .addTablePrefix("")
                             .serviceBuilder().disableService()
@@ -73,7 +87,7 @@ public class CodeGeneratorTest {
                             .controllerBuilder().enableRestStyle();
                 })
                 .injectionConfig(builder -> {
-                    List<CustomFile> customFiles = new ArrayList<>();
+                    // 自定义REQUEST文件生成
                     String requestPath = outputDir + "/cn/dhbin/isme/pms/domain/request";
                     // 自定义文件
                    CustomFile customFile = new CustomFile.Builder()
@@ -81,8 +95,30 @@ public class CodeGeneratorTest {
                            .templatePath("/templates/request.java.ftl")
                            .fileName("Request.java")
                            .build();
-
                     builder.customFile(customFile);
+
+                    // 自定义前端api.js 文件的生成
+                    String apiPath = outputDir + "/vue";
+                    CustomFile customApiJsFile = new CustomFile.Builder()
+                            .filePath(apiPath)
+                            .templatePath("/templates/api.js.ftl")
+                            .formatNameFunction(tableInfo -> "")
+                            .fileName("api.js")
+                            .build();
+                    builder.customFile(customApiJsFile);
+
+                    // 自定义前端index.vue 文件的生成
+                    String vuePath = outputDir + "/vue";
+                    CustomFile customVuePathFile = new CustomFile.Builder()
+                            .filePath(vuePath)
+                            .templatePath("/templates/index.vue.ftl")
+                            .formatNameFunction(tableInfo -> "")
+                            .fileName("index.vue")
+                            .build();
+                    builder.customFile(customVuePathFile);
+
+
+
                     Map<String, Object> customMap = new HashMap<>();
                     customMap.put("requestpackage", "cn.dhbin.isme.pms.domain.request");
                     customMap.put("RPackage", "cn.dhbin.isme.common.response");
@@ -96,6 +132,17 @@ public class CodeGeneratorTest {
                         String formattedFileName = tableInfo.getEntityName() + "Request";
                         objectMap.put("requestFileName", formattedFileName);
                         objectMap.put("requestPackage", "cn.dhbin.isme.pms.domain.request");
+
+                        // 设置系统字段配置
+                        Map<String, Object> config = new HashMap<>();
+                        config.put("systemFields", Arrays.asList(
+                            "id",
+                            CREATE_TIME,
+                            UPDATE_TIME,
+                            CREATE_BY,
+                            UPDATE_BY
+                        ));
+                        objectMap.put("config", config);
                     });
                 })
                 // 模板配置（使用test目录中的自定义模板）

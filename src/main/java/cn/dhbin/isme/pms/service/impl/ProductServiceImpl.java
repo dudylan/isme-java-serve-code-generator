@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
-* <p>
-    * 产品表（用于测试代码生成） 服务实现类
-    * </p>
-*
-* @author Dylan Du
-* @since 2025-09-07
-*/
+ * <p>
+ * 产品表（用于测试代码生成） 服务实现类
+ * </p>
+ *
+ * @author Dylan Du
+ * @since 2025-09-13
+ */
 @Service
-public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>{
+public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> {
 
 }
