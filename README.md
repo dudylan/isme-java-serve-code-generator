@@ -1,3 +1,13 @@
+# 项目介绍
+ 本项目是在(https://github.com/zclzone/isme-nest-serve)的基础上增加了自动生成代码和自动填充数据库的创建时间 修改时间 以及 创建人 修改人的功能。
+ 自动生成代码的功能是在项目启动时根据数据库表自动生成对应的代码，避免了手动编写代码的麻烦。
+ 自动填充数据库的创建时间 修改时间 以及 创建人 修改人的功能是在项目启动时根据数据库表自动填充对应的字段，避免了手动编写代码的麻烦。
+ 其中包含了前端项目[Vue Naive Admin 2.0](https://github.com/zclzone/vue-naive-admin)  的api.js 和相对应的index.vue.
+ 会生成在src/main/java/vue目录下。 复制到前端项目中即可使用。简单的增删改查。减少重复的工作量
+
+
+
+# 以下是原文
 # Isme Java Serve
 
 ![Static Badge](https://img.shields.io/badge/Version-0.0.1--SNAPSHOT-blue)
